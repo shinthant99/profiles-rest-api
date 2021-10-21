@@ -2,10 +2,14 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 #post method import below
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, filters
 from profiles_api import serializers, models, permissions
 from rest_framework.authentication import TokenAuthentication
-
+#login api imports below
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.settings import api_settings
+#permissions for feed
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 class HelloApiView(APIView):
     """Test API View"""
     serializer_class = serializers.HelloSerializer
@@ -91,4 +95,23 @@ class UserProfileViewSets(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     #authentication=how user is authenticated/ permission=how user has what permissions
     permission_classes = (permissions.UpdateOwnProfile,)
-    #passes through permissions.py file
+    #passes through permissions.py 
+    
+    #search functionality add as filter
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name', 'email',)
+
+class UserLoginApiView(ObtainAuthToken):
+    """Handle creating user authentication token"""
+    renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
+
+class UserProfileFeedViewSet(viewsets.ModelViewSet):
+    authentication_classes = (TokenAuthentication,)
+    serializer_class = serializers.ProfileFeedItemSerializer
+    queryset = models.ProfileFeedItem.objects.all()
+    permission_classes = (
+        permissions.UpdateOwnStatus,
+        IsAuthenticated
+    )
+    def perform_create(self, serializer):
+        serializer.save(user_profile=self.request.user)
