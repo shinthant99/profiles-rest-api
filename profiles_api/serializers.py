@@ -17,10 +17,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {
                 'write_only': True,
-                #cannot read or retrieve
+                #cannot read or retrieve (get is disabled)
                 'style': {'input_type': 'password'}
             }
         }
+        #Model serializer doesnt censor password as hash
 
         #default create function ko override lote pee create user func lote mel to hash the password
     #this overrides the create function taking in the create_user function from the models
@@ -32,3 +33,4 @@ class UserProfileSerializer(serializers.ModelSerializer):
             password = validated_data['password']
         )
         return user
+

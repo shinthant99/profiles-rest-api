@@ -90,5 +90,5 @@ class UserProfileViewSets(viewsets.ModelViewSet):
     #authentications added below
     authentication_classes = (TokenAuthentication,)
     #authentication=how user is authenticated/ permission=how user has what permissions
-    permission_classes = (permissions.UpdateOwnProfile)
+    permission_classes = (permissions.UpdateOwnProfile,)
     #passes through permissions.py file
